@@ -1,0 +1,21 @@
+name: Upload Drumall HTML
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # 5분마다 자동 실행
+  workflow_dispatch:        # 수동 실행도 가능
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch drumall HTML
+        run: |
+          curl -L "https://www.drumall.com/open2/bbs.php?sm_id=39" -o page.html
+
+      - name: Upload to Cloudflare Worker
+        run: |
+          curl -X POST "https://drumllalbert.yuwooyul.workers.dev/upload" \
+            -H "Content-Type: text/plain" \
+            --data-binary @page.html
